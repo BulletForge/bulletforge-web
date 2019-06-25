@@ -4335,6 +4335,11 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
+formik-material-ui@^0.0.18:
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/formik-material-ui/-/formik-material-ui-0.0.18.tgz#40c4b09881af9c065690a9d1f9bb6efacf8aabd7"
+  integrity sha512-NQwcWZ5spUYiCc7hRP0b6WzQfIvbidIw1dBS4TcOvLqiwkVtamVPOZWO9mkLOQboAyCn/OKR5CVcdtFaslQmcg==
+
 formik@^1.5.7:
   version "1.5.7"
   resolved "https://registry.yarnpkg.com/formik/-/formik-1.5.7.tgz#2fc5fc2f0c693cdc4e8c9dad3a10eb4c4e131ff5"

@@ -3,7 +3,7 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { Formik, Field, Form } from 'formik';
-import TextField from 'components/Formik/TextField';
+import { TextField } from 'formik-material-ui';
 import RegisterSchema from './Schema';
 
 const Register = () => (

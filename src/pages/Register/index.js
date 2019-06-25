@@ -2,8 +2,8 @@ import React from 'react';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import { Formik } from 'formik';
-import TextField from '@material-ui/core/TextField';
+import { Formik, Field, Form } from 'formik';
+import TextField from 'components/Formik/TextField';
 import RegisterSchema from './Schema';
 
 const Register = () => (
@@ -26,57 +26,34 @@ const Register = () => (
       }}
     >
       {({
-        values,
-        errors,
-        touched,
-        handleChange,
-        handleBlur,
-        handleSubmit,
         isSubmitting,
-        /* and other goodies */
       }) => (
-        <form onSubmit={handleSubmit}>
-          <TextField
+        <Form>
+          <Field
             label="Username"
             name="username"
-            value={values.username}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={touched.username && errors.username}
-            helperText={touched.username && errors.username}
+            component={TextField}
           />
 
-          <TextField
+          <Field
             label="Email"
             type="email"
             name="email"
-            value={values.email}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={touched.email && errors.email}
-            helperText={touched.email && errors.email}
+            component={TextField}
           />
 
-          <TextField
+          <Field
             label="Password"
             type="password"
             name="password"
-            value={values.password}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={touched.password && errors.password}
-            helperText={touched.password && errors.password}
+            component={TextField}
           />
 
-          <TextField
+          <Field
             label="Password Confirmation"
             type="password"
             name="passwordConfirmation"
-            value={values.passwordConfirmation}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={touched.passwordConfirmation && errors.passwordConfirmation}
-            helperText={touched.passwordConfirmation && errors.passwordConfirmation}
+            component={TextField}
           />
 
           <Button
@@ -85,9 +62,9 @@ const Register = () => (
             disabled={isSubmitting}
             type="submit"
           >
-              Register
+            Register
           </Button>
-        </form>
+        </Form>
       )}
     </Formik>
   </Container>

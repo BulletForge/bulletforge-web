@@ -1,7 +1,7 @@
 import { object, string, ref } from 'yup';
 
 export default object().shape({
-  username: string()
+  login: string()
     .min(2)
     .max(255)
     .required(),

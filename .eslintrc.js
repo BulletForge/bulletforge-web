@@ -1,6 +1,6 @@
 module.exports = {
   extends: ["airbnb", "plugin:jest/recommended"],
-  plugins: ["jest"],
+  plugins: ["jest", "react-hooks"],
   env: {
     browser: true,
   },

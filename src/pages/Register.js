@@ -8,8 +8,8 @@ export default () => {
   const [success, updateSuccess] = useState(false);
 
   return (
-    <Container>
-      <Typography variant="h3">Register</Typography>
+    <Container component="main" maxWidth="xs">
+      <Typography component="h1" variant="h5">Register</Typography>
       {
         success
           ? <p>Check ya email!</p>

@@ -2,10 +2,13 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import { Formik, Field, Form } from 'formik';
 import { TextField } from 'formik-material-ui';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 import RegisterSchema from './Schema';
 
-export default ({
-  onSubmit,
+const RegisterForm = ({
+  registerMutation,
+  onSuccess,
 }) => (
   <Formik
     initialValues={{
@@ -15,7 +18,17 @@ export default ({
       passwordConfirmation: '',
     }}
     validationSchema={RegisterSchema}
-    onSubmit={onSubmit}
+    onSubmit={async (variables, { setSubmitting, setFieldError }) => {
+      const { data: { register: { errors } } } = await registerMutation({ variables });
+      setSubmitting(false);
+      if (_.isEmpty(errors)) {
+        onSuccess();
+      } else {
+        _.each(errors, ({ path, message }) => {
+          setFieldError(path[1], message);
+        });
+      }
+    }}
   >
     {({
       isSubmitting,
@@ -25,6 +38,7 @@ export default ({
           label="Login"
           name="login"
           component={TextField}
+          required
         />
 
         <Field
@@ -32,6 +46,7 @@ export default ({
           type="email"
           name="email"
           component={TextField}
+          required
         />
 
         <Field
@@ -39,6 +54,7 @@ export default ({
           type="password"
           name="password"
           component={TextField}
+          required
         />
 
         <Field
@@ -46,6 +62,7 @@ export default ({
           type="password"
           name="passwordConfirmation"
           component={TextField}
+          required
         />
 
         <Button
@@ -54,9 +71,16 @@ export default ({
           disabled={isSubmitting}
           type="submit"
         >
-        Register
+          Register
         </Button>
       </Form>
     )}
   </Formik>
 );
+
+RegisterForm.propTypes = {
+  registerMutation: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func.isRequired,
+};
+
+export default RegisterForm;

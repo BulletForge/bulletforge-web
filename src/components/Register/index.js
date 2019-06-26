@@ -1,7 +1,7 @@
 import React from 'react';
 import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
-import _ from 'lodash';
+import PropTypes from 'prop-types';
 import Form from './Form';
 
 const registerMutation = gql`
@@ -26,28 +26,20 @@ const registerMutation = gql`
 `;
 
 const Register = ({ onSuccess }) => (
-  <Mutation
-    mutation={registerMutation}
-  >
+  <Mutation mutation={registerMutation}>
     {
-      register => (
-        <Form onSubmit={async (variables, { setSubmitting, setFieldError }) => {
-          const { data: { register: { errors } } } = await register({ variables });
-          setSubmitting(false);
-
-          if (_.isEmpty(errors)) {
-            debugger;
-            onSuccess();
-          } else {
-            _.each(errors, ({ path, message }) => {
-              setFieldError(path[1], message);
-            });
-          }
-        }}
-        />
+      (register, { error }) => (
+        <div>
+          <Form registerMutation={register} onSuccess={onSuccess} />
+          { error && <p>error.message</p> }
+        </div>
       )
     }
   </Mutation>
 );
+
+Register.propTypes = {
+  onSuccess: PropTypes.func.isRequired,
+};
 
 export default Register;

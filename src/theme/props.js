@@ -1,9 +1,7 @@
 export default {
   MuiTextField: {
-    fullWidth: true,
+    variant: 'outlined',
     margin: 'normal',
-  },
-  MuiInputLabel: {
-    shrink: true,
+    fullWidth: true,
   },
 };

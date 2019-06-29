@@ -30,13 +30,13 @@ const Register = ({ onSuccess }) => (
   <Mutation mutation={registerMutation}>
     {
       (register, { error }) => (
-        <div>
+        <>
           { error && <p>error.message</p> }
           <Form registerMutation={register} onSuccess={onSuccess} />
           <Link to="/login" variant="body2">
             Already have an account?
           </Link>
-        </div>
+        </>
       )
     }
   </Mutation>

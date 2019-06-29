@@ -2,8 +2,7 @@ import React from 'react';
 import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import PropTypes from 'prop-types';
-import Link from '@material-ui/core/Link';
-import { Link as RouterLink } from 'react-router-dom';
+import Link from 'components/Link';
 import Form from './Form';
 
 const registerMutation = gql`
@@ -34,8 +33,8 @@ const Register = ({ onSuccess }) => (
         <div>
           { error && <p>error.message</p> }
           <Form registerMutation={register} onSuccess={onSuccess} />
-          <Link component={RouterLink} href="/login" variant="body2">
-            {'Already have an account?'}
+          <Link to="/login" variant="body2">
+            Already have an account?
           </Link>
         </div>
       )

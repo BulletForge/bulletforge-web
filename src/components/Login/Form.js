@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
 import { Formik, Field, Form } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField, Checkbox } from 'formik-material-ui';
+import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { makeStyles } from '@material-ui/core/styles';
 import _ from 'lodash';
-import RegisterSchema from './Schema';
+import LoginSchema from './Schema';
+
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -17,8 +19,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const RegisterForm = ({
-  registerMutation,
+const LoginForm = ({
+  loginMutation,
   onSuccess,
 }) => {
   const classes = useStyles();
@@ -27,67 +29,61 @@ const RegisterForm = ({
     <Formik
       initialValues={{
         login: '',
-        email: '',
         password: '',
-        passwordConfirmation: '',
+        rememberMe: false,
       }}
-      validationSchema={RegisterSchema}
+      validationSchema={LoginSchema}
       onSubmit={async (variables, { setSubmitting, setFieldError }) => {
-        const { data: { register: { errors } } } = await registerMutation({ variables });
+        const { data: { login: { token, errors } } } = await loginMutation({ variables });
         setSubmitting(false);
         if (_.isEmpty(errors)) {
           onSuccess();
+          alert(token);
         } else {
-          _.each(errors, ({ path, message }) => {
-            setFieldError(path[1], message);
-          });
+          setFieldError('general', errors[0].message);
         }
       }}
     >
       {({
         isSubmitting,
       }) => (
-        <Form className={classes.form}>
+        <Form className={classes.form} noValidate>
           <Field
-            label="Login"
+            required
+            label="Username"
             name="login"
+            autoComplete="login"
+            autoFocus
             component={TextField}
-            required
           />
-
           <Field
-            label="Email"
-            type="email"
-            name="email"
-            component={TextField}
             required
-          />
-
-          <Field
             label="Password"
-            type="password"
             name="password"
-            component={TextField}
-            required
-          />
-
-          <Field
-            label="Password Confirmation"
+            autoComplete="current-password"
             type="password"
-            name="passwordConfirmation"
             component={TextField}
-            required
+          />
+          <FormControlLabel
+            control={(
+              <Field
+                name="rememberMe"
+                color="primary"
+                component={Checkbox}
+              />
+)}
+            label="Remember me"
           />
 
           <Button
+            type="submit"
+            fullWidth
             variant="contained"
             color="primary"
-            disabled={isSubmitting}
-            type="submit"
             className={classes.submit}
-            fullWidth
+            disabled={isSubmitting}
           >
-          Register
+            Sign In
           </Button>
         </Form>
       )}
@@ -95,9 +91,9 @@ const RegisterForm = ({
   );
 };
 
-RegisterForm.propTypes = {
-  registerMutation: PropTypes.func.isRequired,
+LoginForm.propTypes = {
+  loginMutation: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
 };
 
-export default RegisterForm;
+export default LoginForm;

@@ -31,7 +31,7 @@ const Register = ({ onSuccess }) => (
     {
       (register, { error }) => (
         <>
-          { error && <p>error.message</p> }
+          { error && <p>{error.message}</p> }
           <Form registerMutation={register} onSuccess={onSuccess} />
           <Link to="/login" variant="body2">
             Already have an account?

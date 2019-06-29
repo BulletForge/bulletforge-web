@@ -6,7 +6,8 @@ import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import Button from '@material-ui/core/Button';
 import SearchIcon from '@material-ui/icons/Search';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
+import Link from 'components/Link';
 
 const useStyles = makeStyles(theme => ({
   grow: {
@@ -69,7 +70,7 @@ export default function PrimarySearchAppBar() {
       <AppBar position="static">
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
-            BulletForge
+            <Link to="/home" color="inherit">BulletForge</Link>
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -86,8 +87,8 @@ export default function PrimarySearchAppBar() {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <Button color="inherit" component={Link} to="/register">Register</Button>
-            <Button color="inherit" component={Link} to="/login">Login</Button>
+            <Button color="inherit" component={RouterLink} to="/register">Register</Button>
+            <Button color="inherit" component={RouterLink} to="/login">Login</Button>
           </div>
         </Toolbar>
       </AppBar>

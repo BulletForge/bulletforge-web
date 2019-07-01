@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Home = () => {
+const HomePage = () => {
   const [count, setCount] = useState(0);
 
   return (
@@ -20,4 +20,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;

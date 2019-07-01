@@ -7,6 +7,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import _ from 'lodash';
 import LoginSchema from './Schema';
+import ErrorMessages from './ErrorMessages';
 
 
 const useStyles = makeStyles(theme => ({
@@ -20,8 +21,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const LoginForm = ({
-  loginMutation,
-  onSuccess,
+  login,
+  onLogin,
 }) => {
   const classes = useStyles();
 
@@ -34,20 +35,21 @@ const LoginForm = ({
       }}
       validationSchema={LoginSchema}
       onSubmit={async (variables, { setSubmitting, setFieldError }) => {
-        const { data: { login: { token, errors } } } = await loginMutation({ variables });
+        const { data: { login: { token, errors } } } = await login({ variables });
         setSubmitting(false);
         if (_.isEmpty(errors)) {
-          onSuccess();
-          alert(token);
+          onLogin(token);
         } else {
-          setFieldError('general', errors[0].message);
+          setFieldError('general', _.map(errors, 'message'));
         }
       }}
     >
       {({
         isSubmitting,
+        errors,
       }) => (
         <Form className={classes.form} noValidate>
+          <ErrorMessages errors={errors.general} />
           <Field
             required
             label="Username"
@@ -71,7 +73,7 @@ const LoginForm = ({
                 color="primary"
                 component={Checkbox}
               />
-)}
+            )}
             label="Remember me"
           />
 
@@ -92,8 +94,8 @@ const LoginForm = ({
 };
 
 LoginForm.propTypes = {
-  loginMutation: PropTypes.func.isRequired,
-  onSuccess: PropTypes.func.isRequired,
+  login: PropTypes.func.isRequired,
+  onLogin: PropTypes.func.isRequired,
 };
 
 export default LoginForm;

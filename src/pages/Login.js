@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SignIn() {
+export default ({ history, updateAccessToken }) => {
   const classes = useStyles();
 
   return (
@@ -23,8 +23,8 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Log In
         </Typography>
-        <Login />
+        <Login updateAccessToken={updateAccessToken} onLogin={() => history.replace('/')} />
       </div>
     </Container>
   );
-}
+};

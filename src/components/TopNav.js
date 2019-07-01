@@ -6,8 +6,11 @@ import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import Button from '@material-ui/core/Button';
 import SearchIcon from '@material-ui/icons/Search';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, withRouter } from 'react-router-dom';
+
 import Link from 'components/Link';
+import { CurrentUserConsumer } from 'components/CurrentUser';
+import { clearAccessToken } from 'utils/accessToken';
 
 const useStyles = makeStyles(theme => ({
   grow: {
@@ -62,36 +65,53 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+function PrimarySearchAppBar({ history, updateAccessToken }) {
   const classes = useStyles();
+
+  const handleLogout = () => {
+    clearAccessToken();
+    updateAccessToken(null);
+    history.replace('/');
+  };
 
   return (
     <div className={classes.grow}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography className={classes.title} variant="h6" noWrap>
-            <Link to="/home" color="inherit">BulletForge</Link>
-          </Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'Search' }}
-            />
-          </div>
-          <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
-            <Button color="inherit" component={RouterLink} to="/register">Register</Button>
-            <Button color="inherit" component={RouterLink} to="/login">Login</Button>
-          </div>
-        </Toolbar>
-      </AppBar>
+      <CurrentUserConsumer>
+        {
+          user => (
+            <AppBar position="static">
+              <Toolbar>
+                <Typography className={classes.title} variant="h6" noWrap>
+                  <Link to="/" color="inherit">BulletForge</Link>
+                </Typography>
+                <div className={classes.search}>
+                  <div className={classes.searchIcon}>
+                    <SearchIcon />
+                  </div>
+                  <InputBase
+                    placeholder="Search…"
+                    classes={{
+                      root: classes.inputRoot,
+                      input: classes.inputInput,
+                    }}
+                    inputProps={{ 'aria-label': 'Search' }}
+                  />
+                </div>
+                <div className={classes.grow} />
+                <div className={classes.sectionDesktop}>
+                  { !user && <Button color="inherit" component={RouterLink} to="/register">Register</Button> }
+                  { !user && <Button color="inherit" component={RouterLink} to="/login">Login</Button> }
+                  { user && <p>{`Hello! ${user.login}`}</p> }
+                  { user && <Button color="inherit" onClick={handleLogout}>Logout</Button> }
+
+                </div>
+              </Toolbar>
+            </AppBar>
+          )
+        }
+      </CurrentUserConsumer>
     </div>
   );
 }
+
+export default withRouter(PrimarySearchAppBar);

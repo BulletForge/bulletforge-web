@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import _ from 'lodash';
-
+import { setAccessToken, clearAccessToken } from 'utils/accessToken';
 import context from './context';
 
 const query = gql`
@@ -20,15 +20,30 @@ const query = gql`
 const Provider = ({ children }) => (
   <Query query={query}>
     {
-      ({ loading, error, data }) => {
+      ({
+        loading, error, data, refetch,
+      }) => {
         if (loading) {
           return <p>loading...</p>;
         }
         if (error) {
           return <p>{error.message}</p>;
         }
+
+        const user = _.get(data, 'me', 'user');
+
+        const logout = () => {
+          clearAccessToken();
+          refetch();
+        };
+
+        const login = (token) => {
+          setAccessToken(token);
+          refetch();
+        };
+
         return (
-          <context.Provider value={_.get(data, 'me', 'user')}>
+          <context.Provider value={{ user, logout, login }}>
             { children }
           </context.Provider>
         );

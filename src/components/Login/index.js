@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 
 import Link from 'components/Link';
-import { setAccessToken } from 'utils/accessToken';
 import Form from './Form';
 
 const loginMutation = gql`
@@ -26,20 +25,13 @@ const loginMutation = gql`
   }
 `;
 
-const Login = ({ onLogin, updateAccessToken }) => {
-  const handleLogin = (token) => {
-    setAccessToken(token);
-    updateAccessToken(token);
-    onLogin(token);
-  };
-
-  return (
-    <Mutation mutation={loginMutation}>
-      {
+const Login = ({ onLogin }) => (
+  <Mutation mutation={loginMutation}>
+    {
       (login, { error }) => (
         <>
           { error && <p>{error.message}</p> }
-          <Form login={login} onLogin={handleLogin} />
+          <Form login={login} onLogin={onLogin} />
           <Grid container>
             <Grid item xs>
               <Link to="/" variant="body2">
@@ -55,13 +47,11 @@ const Login = ({ onLogin, updateAccessToken }) => {
         </>
       )
     }
-    </Mutation>
-  );
-};
+  </Mutation>
+);
 
 Login.propTypes = {
   onLogin: PropTypes.func,
-  updateAccessToken: PropTypes.func.isRequired,
 };
 
 Login.defaultProps = {

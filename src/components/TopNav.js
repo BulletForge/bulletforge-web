@@ -6,11 +6,10 @@ import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import Button from '@material-ui/core/Button';
 import SearchIcon from '@material-ui/icons/Search';
-import { Link as RouterLink, withRouter } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 import Link from 'components/Link';
 import { CurrentUserConsumer } from 'components/CurrentUser';
-import { clearAccessToken } from 'utils/accessToken';
 
 const useStyles = makeStyles(theme => ({
   grow: {
@@ -65,20 +64,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function PrimarySearchAppBar({ history, updateAccessToken }) {
+function PrimarySearchAppBar() {
   const classes = useStyles();
-
-  const handleLogout = () => {
-    clearAccessToken();
-    updateAccessToken(null);
-    history.replace('/');
-  };
 
   return (
     <div className={classes.grow}>
       <CurrentUserConsumer>
         {
-          user => (
+          ({ user, logout }) => (
             <AppBar position="static">
               <Toolbar>
                 <Typography className={classes.title} variant="h6" noWrap>
@@ -102,8 +95,7 @@ function PrimarySearchAppBar({ history, updateAccessToken }) {
                   { !user && <Button color="inherit" component={RouterLink} to="/register">Register</Button> }
                   { !user && <Button color="inherit" component={RouterLink} to="/login">Login</Button> }
                   { user && <p>{`Hello! ${user.login}`}</p> }
-                  { user && <Button color="inherit" onClick={handleLogout}>Logout</Button> }
-
+                  { user && <Button color="inherit" onClick={logout}>Logout</Button> }
                 </div>
               </Toolbar>
             </AppBar>
@@ -114,4 +106,4 @@ function PrimarySearchAppBar({ history, updateAccessToken }) {
   );
 }
 
-export default withRouter(PrimarySearchAppBar);
+export default PrimarySearchAppBar;

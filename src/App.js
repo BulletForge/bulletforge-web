@@ -10,6 +10,7 @@ import TopNav from 'components/TopNav';
 import Home from 'pages/Home';
 import Register from 'pages/Register';
 import Login from 'pages/Login';
+import Projects from 'pages/Projects';
 import { CurrentUserProvider } from 'components/CurrentUser';
 
 const App = () => (
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/" exact component={Home} />
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
+            <Route path="/projects" component={Projects} />
           </div>
         </CurrentUserProvider>
       </BrowserRouter>

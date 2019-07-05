@@ -30,7 +30,7 @@ const Provider = ({ children }) => (
           return <p>{error.message}</p>;
         }
 
-        const user = _.get(data, 'me', 'user');
+        const user = _.get(data, 'me');
 
         const logout = () => {
           clearAccessToken();

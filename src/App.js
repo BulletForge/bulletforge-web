@@ -11,6 +11,7 @@ import Home from 'pages/Home';
 import Register from 'pages/Register';
 import Login from 'pages/Login';
 import Projects from 'pages/Projects';
+import NewProject from 'pages/NewProject';
 import { CurrentUserProvider } from 'components/CurrentUser';
 
 const App = () => (
@@ -23,9 +24,10 @@ const App = () => (
             <TopNav />
 
             <Route path="/" exact component={Home} />
-            <Route path="/register" component={Register} />
-            <Route path="/login" component={Login} />
-            <Route path="/projects" component={Projects} />
+            <Route path="/register" exact component={Register} />
+            <Route path="/login" exact component={Login} />
+            <Route path="/projects" exact component={Projects} />
+            <Route path="/projects/new" exact component={NewProject} />
           </div>
         </CurrentUserProvider>
       </BrowserRouter>

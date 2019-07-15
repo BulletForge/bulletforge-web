@@ -31,7 +31,21 @@ const mutation = gql`
   }
 `;
 
+const getMutationResponse = async (file, mutate) => {
+  let response;
+
+  try {
+    const variables = await extractMetadata(file);
+    response = await mutate({ variables });
+  } catch (error) {
+    return { error };
+  }
+
+  return { response };
+};
+
 const Uploader = ({
+  onStart,
   onProgress,
   onError,
   onFinish,
@@ -41,24 +55,16 @@ const Uploader = ({
     {
       (mutate) => {
         const getSignedUrl = async (file, callback) => {
-          let variables;
-          let data;
+          const { response, error } = await getMutationResponse(file, mutate);
 
-          try {
-            variables = await extractMetadata(file);
-          } catch (error) {
+          if (error) {
             onError(error);
             return;
           }
 
-          try {
-            data = await mutate({ variables });
-          } catch (error) {
-            onError(error);
-            return;
-          }
+          onStart(response);
 
-          const { data: { createDirectUpload: { directUpload } } } = data;
+          const { data: { createDirectUpload: { directUpload } } } = response;
           delete directUpload.headers['Content-Type'];
 
           callback(directUpload);
@@ -80,6 +86,7 @@ const Uploader = ({
 );
 
 Uploader.propTypes = {
+  onStart: PropTypes.func,
   onProgress: PropTypes.func,
   onError: PropTypes.func,
   onFinish: PropTypes.func,
@@ -88,9 +95,18 @@ Uploader.propTypes = {
 
 /* eslint-disable no-console */
 Uploader.defaultProps = {
-  onProgress: (progress) => { console.log(`Upload Progress: ${progress}%`); },
-  onError: (error) => { console.log(`Upload Error: ${error}`); },
-  onFinish: ({ signedBlobId }) => { console.log(`Upload Finished! Signed blob id: ${signedBlobId}`); },
+  onStart: (signingResponse) => {
+    console.log(`Upload Started. Signing server response ${signingResponse}`);
+  },
+  onProgress: (progress, message, file) => {
+    console.log(`Upload Progress for ${file.name}: ${progress}% ${message}`);
+  },
+  onError: (error) => {
+    console.log(`Upload Error: ${error}`);
+  },
+  onFinish: ({ signedBlobId }) => {
+    console.log(`Upload Finished. Signed blob id: ${signedBlobId}`);
+  },
   autoUpload: true,
 };
 /* eslint-enable no-console */

@@ -3,7 +3,7 @@ import Uploader from 'components/Uploader';
 
 
 const NewProjectPage = () => (
-  <Uploader onError={error => console.log(error)} />
+  <Uploader />
 );
 
 export default NewProjectPage;

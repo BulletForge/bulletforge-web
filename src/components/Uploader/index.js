@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReactS3Uploader from 'react-s3-uploader';
 import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
@@ -18,7 +19,7 @@ const mutation = gql`
       contentType: $contentType
     }) {
       directUpload {
-        url
+        signedUrl
         headers
         signedBlobId
       }
@@ -30,7 +31,7 @@ const mutation = gql`
   }
 `;
 
-export default ({
+const Uploader = ({
   onProgress,
   onError,
   onFinish,
@@ -58,12 +59,9 @@ export default ({
           }
 
           const { data: { createDirectUpload: { directUpload } } } = data;
-          const { url: signedUrl } = directUpload;
+          delete directUpload.headers['Content-Type'];
 
-          const headers = JSON.parse(directUpload.headers);
-          delete headers['Content-Type'];
-
-          callback({ signedUrl, headers });
+          callback(directUpload);
         };
 
         return (
@@ -80,3 +78,21 @@ export default ({
     }
   </Mutation>
 );
+
+Uploader.propTypes = {
+  onProgress: PropTypes.func,
+  onError: PropTypes.func,
+  onFinish: PropTypes.func,
+  autoUpload: PropTypes.bool,
+};
+
+/* eslint-disable no-console */
+Uploader.defaultProps = {
+  onProgress: (progress) => { console.log(`Upload Progress: ${progress}%`); },
+  onError: (error) => { console.log(`Upload Error: ${error}`); },
+  onFinish: ({ signedBlobId }) => { console.log(`Upload Finished! Signed blob id: ${signedBlobId}`); },
+  autoUpload: true,
+};
+/* eslint-enable no-console */
+
+export default Uploader;

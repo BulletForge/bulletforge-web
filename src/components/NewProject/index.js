@@ -1,50 +1,21 @@
-import React, { useState } from 'react';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import React from 'react';
 
 import ArchiveUploader from './ArchiveUploader';
 
 export default () => {
-  const [upload, setUpload] = useState({ progress: 0, status: 'Waiting' });
   const onStart = () => {
-    setUpload({ progress: 0, status: 'Waiting' });
+    console.log('Upload Started.');
   };
-  const onProgress = (progress, status) => {
-    setUpload({
-      ...upload,
-      progress,
-      status,
-    });
-  };
-  const onError = (message) => {
-    setUpload({
-      ...upload,
-      status: 'Error',
-      error: message,
-    });
-  };
-  const onFinish = (signedBlobId) => {
-    setUpload({
-      ...upload,
-      progress: 100,
-      status: 'Finished',
-    });
+  const onFinish = ({ signedBlobId }) => {
+    console.log(`Upload Finished. Signed blob id: ${signedBlobId}`);
   };
 
   return (
     <>
       <ArchiveUploader
         onStart={onStart}
-        onProgress={onProgress}
-        onError={onError}
         onFinish={onFinish}
-        name="archive"
       />
-      <p>
-        {upload.status}
-        {' '}
-        {`${upload.progress}%`}
-      </p>
-      <LinearProgress variant="determinate" value={upload.progress} />
     </>
   );
 };

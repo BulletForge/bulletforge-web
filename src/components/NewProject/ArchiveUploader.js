@@ -14,7 +14,7 @@ const ArchiveUploader = ({
     onProgress={onProgress}
     onError={onError}
     onFinish={onFinish}
-
+    accept=".zip, .rar, .tar"
     {...props}
   />
 );

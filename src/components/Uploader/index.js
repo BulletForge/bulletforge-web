@@ -45,11 +45,14 @@ const getMutationResponse = async (file, mutate) => {
 };
 
 const Uploader = ({
+  accept,
+  autoUpload,
   onStart,
   onProgress,
   onError,
   onFinish,
-  autoUpload,
+  sizeLimit,
+  ...props
 }) => (
   <Mutation mutation={mutation}>
     {
@@ -62,7 +65,7 @@ const Uploader = ({
             return;
           }
 
-          onStart(response);
+          onStart();
 
           const { data: { createDirectUpload: { directUpload } } } = response;
           delete directUpload.headers['Content-Type'];
@@ -70,14 +73,25 @@ const Uploader = ({
           callback(directUpload);
         };
 
+        const preprocess = (file, next) => {
+          if (file.size > sizeLimit) {
+            onError(`File size too large. File size limit is ${sizeLimit} bytes`);
+          } else {
+            next(file);
+          }
+        };
+
         return (
           <ReactS3Uploader
             getSignedUrl={getSignedUrl}
+            preprocess={preprocess}
             onProgress={onProgress}
             onError={onError}
             onFinish={onFinish}
+            accept={accept}
             autoUpload={autoUpload}
             uploadRequestHeaders={{}}
+            {...props}
           />
         );
       }
@@ -86,17 +100,21 @@ const Uploader = ({
 );
 
 Uploader.propTypes = {
+  accept: PropTypes.string,
+  autoUpload: PropTypes.bool,
   onStart: PropTypes.func,
   onProgress: PropTypes.func,
   onError: PropTypes.func,
   onFinish: PropTypes.func,
-  autoUpload: PropTypes.bool,
+  sizeLimit: PropTypes.number,
 };
 
 /* eslint-disable no-console */
 Uploader.defaultProps = {
-  onStart: (signingResponse) => {
-    console.log(`Upload Started. Signing server response ${signingResponse}`);
+  accept: 'image/*',
+  autoUpload: true,
+  onStart: () => {
+    console.log('Upload Started.');
   },
   onProgress: (progress, message, file) => {
     console.log(`Upload Progress for ${file.name}: ${progress}% ${message}`);
@@ -107,7 +125,7 @@ Uploader.defaultProps = {
   onFinish: ({ signedBlobId }) => {
     console.log(`Upload Finished. Signed blob id: ${signedBlobId}`);
   },
-  autoUpload: true,
+  sizeLimit: 314572800,
 };
 /* eslint-enable no-console */
 

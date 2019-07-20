@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ArchiveUploader from './ArchiveUploader';
+import Archive from './Archive';
 
 export default () => {
   const onStart = () => {
@@ -11,11 +11,9 @@ export default () => {
   };
 
   return (
-    <>
-      <ArchiveUploader
-        onStart={onStart}
-        onFinish={onFinish}
-      />
-    </>
+    <Archive
+      onStart={onStart}
+      onFinish={onFinish}
+    />
   );
 };

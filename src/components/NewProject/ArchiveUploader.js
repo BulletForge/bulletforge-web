@@ -1,109 +1,48 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import React from 'react';
 import Box from '@material-ui/core/Box';
-import { darken, makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import { CloudUpload } from '@material-ui/icons';
+import { makeStyles } from '@material-ui/core/styles';
 
 import Uploader from 'components/Uploader';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
-    width: '0.1px',
-    height: '0.1px',
-    opacity: 0,
-    overflow: 'hidden',
-    position: 'absolute',
-    zIndex: -1,
-    '& + label': {
-      padding: theme.spacing(2),
-      textAlign: 'center',
-      color: 'white',
-      backgroundColor: theme.palette.primary.main,
-      display: 'inline-block',
-      cursor: 'pointer',
-    },
+    display: 'none',
     '&:focus + label': {
       outline: '1px dotted #000',
-      backgroundColor: darken(theme.palette.primary.main, 0.15),
     },
-    '& + label:hover': {
-      backgroundColor: darken(theme.palette.primary.main, 0.15),
-    },
+  },
+  icon: {
+    marginRight: theme.spacing(1),
   },
 }));
 
 const ArchiveUploader = ({
-  onStart,
-  onFinish,
+  ...props
 }) => {
   const classes = useStyles();
 
-  const [upload, setUpload] = useState({ progress: 0, status: 'Waiting' });
-  const onBegin = () => {
-    setUpload({ progress: 0, status: 'Waiting' });
-    onStart();
-  };
-  const onProgress = (progress, status) => {
-    setUpload({
-      ...upload,
-      progress,
-      status,
-    });
-  };
-  const onError = (message) => {
-    setUpload({
-      ...upload,
-      status: 'Error',
-      error: message,
-    });
-  };
-  const onEnd = (directUpload) => {
-    setUpload({
-      ...upload,
-      progress: 100,
-      status: 'Finished',
-    });
-    onFinish(directUpload);
-  };
-
   return (
     <>
-      <Box fontWeight="fontWeightBold">
+      <Box>
         <Uploader
           accept=".zip, .rar, .tar"
-          onStart={onBegin}
-          onProgress={onProgress}
-          onError={onError}
-          onFinish={onEnd}
           id="archive-input"
           className={classes.fileInput}
+          {...props}
         />
         <label htmlFor="archive-input">
-          Choose a file...
+          <Button size="large" color="primary" variant="contained" component="span">
+            <CloudUpload className={classes.icon}>
+              Upload
+            </CloudUpload>
+            Upload file
+          </Button>
         </label>
       </Box>
-      <p>
-        {`${upload.status} ${upload.progress}%`}
-      </p>
-      <LinearProgress variant="determinate" value={upload.progress} />
     </>
   );
 };
-
-ArchiveUploader.propTypes = {
-  onStart: PropTypes.func,
-  onFinish: PropTypes.func,
-};
-
-/* eslint-disable no-console */
-ArchiveUploader.defaultProps = {
-  onStart: () => {
-    console.log('Upload Started.');
-  },
-  onFinish: ({ signedBlobId }) => {
-    console.log(`Upload Finished. Signed blob id: ${signedBlobId}`);
-  },
-};
-/* eslint-enable no-console */
 
 export default ArchiveUploader;

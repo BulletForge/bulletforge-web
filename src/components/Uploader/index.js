@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReactS3Uploader from 'react-s3-uploader';
+import DropzoneS3Uploader from 'react-dropzone-s3-uploader';
 import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import extractMetadata from './metadata';
@@ -48,10 +48,8 @@ const Uploader = ({
   accept,
   autoUpload,
   onStart,
-  onProgress,
   onError,
-  onFinish,
-  sizeLimit,
+  children,
   ...props
 }) => (
   <Mutation mutation={mutation}>
@@ -73,26 +71,23 @@ const Uploader = ({
           callback(directUpload);
         };
 
-        const preprocess = (file, next) => {
-          if (file.size > sizeLimit) {
-            onError(`File size too large. File size limit is ${sizeLimit} bytes`);
-          } else {
-            next(file);
-          }
+        const uploadOptions = {
+          getSignedUrl,
+          autoUpload,
+          uploadRequestHeaders: {},
         };
 
         return (
-          <ReactS3Uploader
-            getSignedUrl={getSignedUrl}
-            preprocess={preprocess}
-            onProgress={onProgress}
+          <DropzoneS3Uploader
+            upload={uploadOptions}
+            s3Url="https://s3.amazonaws.com/bulletforge_development"
+            passChildrenProps={false}
             onError={onError}
-            onFinish={onFinish}
             accept={accept}
-            autoUpload={autoUpload}
-            uploadRequestHeaders={{}}
             {...props}
-          />
+          >
+            {children}
+          </DropzoneS3Uploader>
         );
       }
     }
@@ -103,10 +98,8 @@ Uploader.propTypes = {
   accept: PropTypes.string,
   autoUpload: PropTypes.bool,
   onStart: PropTypes.func,
-  onProgress: PropTypes.func,
   onError: PropTypes.func,
-  onFinish: PropTypes.func,
-  sizeLimit: PropTypes.number,
+  children: PropTypes.node,
 };
 
 /* eslint-disable no-console */
@@ -116,16 +109,10 @@ Uploader.defaultProps = {
   onStart: () => {
     console.log('Upload Started.');
   },
-  onProgress: (progress, message, file) => {
-    console.log(`Upload Progress for ${file.name}: ${progress}% ${message}`);
-  },
   onError: (error) => {
     console.log(`Upload Error: ${error}`);
   },
-  onFinish: ({ signedBlobId }) => {
-    console.log(`Upload Finished. Signed blob id: ${signedBlobId}`);
-  },
-  sizeLimit: 314572800,
+  children: null,
 };
 /* eslint-enable no-console */
 

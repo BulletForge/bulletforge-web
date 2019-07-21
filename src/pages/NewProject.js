@@ -1,13 +1,16 @@
 import React from 'react';
 import NewProject from 'components/NewProject';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import Paper from '@material-ui/core/Paper';
 
 
 const useStyles = makeStyles(theme => ({
   container: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(4),
+  },
+  paper: {
+    padding: theme.spacing(1),
   },
 }));
 
@@ -16,10 +19,9 @@ const NewProjectPage = () => {
 
   return (
     <Container component="main" className={classes.container}>
-      <Typography component="h1" variant="h3">
-        New Project
-      </Typography>
-      <NewProject />
+      <Paper className={classes.paper}>
+        <NewProject />
+      </Paper>
     </Container>
   );
 };

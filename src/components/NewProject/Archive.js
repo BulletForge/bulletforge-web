@@ -8,8 +8,7 @@ import UploadStatus from './UploadStatus';
 
 const useStyles = makeStyles(theme => ({
   content: {
-    textAlign: 'center',
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -18,31 +17,31 @@ const Archive = ({
   onFinish,
 }) => {
   const [upload, setUpload] = useState({ progress: 0, status: 'Waiting' });
-  const [showButton, setShowButton] = useState(true);
+  const [showUploader, setShowUploader] = useState(true);
   const [showProgress, setShowProgress] = useState(false);
 
-  const onBegin = () => {
+  const handleStart = () => {
     setUpload({ progress: 0, status: 'Waiting' });
-    setShowButton(false);
+    setShowUploader(false);
     setShowProgress(true);
     onStart();
   };
-  const onProgress = (progress, status) => {
+  const handleProgress = (progress, status) => {
     setUpload({
       ...upload,
       progress,
       status,
     });
   };
-  const onError = (message) => {
+  const handleError = (message) => {
     setUpload({
       ...upload,
       status: 'Error',
       error: message,
     });
-    setShowButton(true);
+    setShowUploader(true);
   };
-  const onEnd = (directUpload) => {
+  const handleFinish = (directUpload) => {
     setUpload({
       ...upload,
       progress: 100,
@@ -55,12 +54,14 @@ const Archive = ({
 
   return (
     <div className={classes.content}>
-      <Collapse in={showButton}>
+      <Collapse in={showUploader}>
         <ArchiveUploader
-          onStart={onBegin}
-          onProgress={onProgress}
-          onError={onError}
-          onFinish={onEnd}
+          maxSizeInMegabytes={300}
+          accept=".zip, .rar, .tar, .7z"
+          onStart={handleStart}
+          onProgress={handleProgress}
+          onError={handleError}
+          onFinish={handleFinish}
         />
       </Collapse>
       <Collapse in={showProgress}>

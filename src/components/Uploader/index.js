@@ -58,16 +58,21 @@ const Uploader = ({
         const getSignedUrl = async (file, callback) => {
           onStart(file);
 
-          const { response, error } = await getMutationResponse(file, mutate);
+          const { response, error: mutationError } = await getMutationResponse(file, mutate);
 
-          if (error) {
-            onError(error.message);
+          if (mutationError) {
+            onError(mutationError.message);
             return;
           }
 
-          const { data: { createDirectUpload: { directUpload } } } = response;
-          delete directUpload.headers['Content-Type'];
+          const { data: { createDirectUpload: { directUpload, errors: userErrors } } } = response;
 
+          if (userErrors[0]) {
+            onError(userErrors[0].message);
+            return;
+          }
+
+          delete directUpload.headers['Content-Type'];
           callback(directUpload);
         };
 

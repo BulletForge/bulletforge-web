@@ -23,13 +23,6 @@ const Provider = ({ children }) => (
       ({
         loading, error, data, refetch,
       }) => {
-        if (loading) {
-          return <p>loading...</p>;
-        }
-        if (error) {
-          return <p>{error.message}</p>;
-        }
-
         const user = _.get(data, 'me');
 
         const logout = () => {
@@ -43,7 +36,15 @@ const Provider = ({ children }) => (
         };
 
         return (
-          <context.Provider value={{ user, logout, login }}>
+          <context.Provider
+            value={{
+              user,
+              loading,
+              error,
+              logout,
+              login,
+            }}
+          >
             { children }
           </context.Provider>
         );

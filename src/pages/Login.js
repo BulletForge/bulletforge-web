@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
-import { CurrentUserConsumer } from 'components/CurrentUser';
+import { useCurrentUser } from 'components/CurrentUser';
 import Login from 'components/Login';
 
 const useStyles = makeStyles(theme => ({
@@ -18,29 +18,22 @@ const useStyles = makeStyles(theme => ({
 
 const LoginPage = ({ history }) => {
   const classes = useStyles();
+  const { login } = useCurrentUser();
+
+  const handleLogin = (token) => {
+    login(token);
+    history.replace('/');
+  };
 
   return (
-    <CurrentUserConsumer>
-      {
-      ({ login }) => {
-        const handleLogin = (token) => {
-          login(token);
-          history.replace('/');
-        };
-
-        return (
-          <Container component="main" maxWidth="xs">
-            <div className={classes.paper}>
-              <Typography component="h1" variant="h5">
-                Log In
-              </Typography>
-              <Login onLogin={handleLogin} />
-            </div>
-          </Container>
-        );
-      }
-    }
-    </CurrentUserConsumer>
+    <Container component="main" maxWidth="xs">
+      <div className={classes.paper}>
+        <Typography component="h1" variant="h5">
+          Log In
+        </Typography>
+        <Login onLogin={handleLogin} />
+      </div>
+    </Container>
   );
 };
 

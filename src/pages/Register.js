@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 
 export default () => {
   const classes = useStyles();
-  const [success, updateSuccess] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -27,7 +27,7 @@ export default () => {
         {
           success
             ? <p>Thank you for registering! Please check your email for a confirmation email.</p>
-            : <Register onSuccess={() => updateSuccess(true)} />
+            : <Register onSuccess={() => setSuccess(true)} />
         }
       </div>
     </Container>

@@ -1,10 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
+import { useSnackbar } from 'notistack';
 import { Formik, Field, Form } from 'formik';
 import { TextField } from 'formik-material-ui';
 import _ from 'lodash';
+
 import RegisterSchema from './Schema';
 
 const useStyles = makeStyles(theme => ({
@@ -23,6 +27,24 @@ const RegisterForm = ({
 }) => {
   const classes = useStyles();
 
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const handleError = (message) => {
+    const action = key => (
+      <IconButton
+        key="close"
+        aria-label="Close"
+        color="inherit"
+        onClick={() => { closeSnackbar(key); }}
+      >
+        <CloseIcon />
+      </IconButton>
+    );
+    enqueueSnackbar(message, {
+      action,
+      variant: 'error',
+    });
+  };
+
   return (
     <Formik
       initialValues={{
@@ -33,8 +55,19 @@ const RegisterForm = ({
       }}
       validationSchema={RegisterSchema}
       onSubmit={async (variables, { setSubmitting, setFieldError }) => {
-        const { data: { register: { errors } } } = await registerMutation({ variables });
-        setSubmitting(false);
+        let response;
+
+        try {
+          response = await registerMutation({ variables });
+        } catch (error) {
+          handleError(error.message);
+          return;
+        } finally {
+          setSubmitting(false);
+        }
+
+        const { data: { register: { errors } } } = response;
+
         if (_.isEmpty(errors)) {
           onSuccess();
         } else {

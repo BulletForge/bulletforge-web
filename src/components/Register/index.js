@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
-import PropTypes from 'prop-types';
+
 import Link from 'components/Link';
 import Form from './Form';
 
@@ -29,12 +30,11 @@ const registerMutation = gql`
 const Register = ({ onSuccess }) => (
   <Mutation mutation={registerMutation}>
     {
-      (register, { error }) => (
+      register => (
         <>
-          { error && <p>{error.message}</p> }
           <Form registerMutation={register} onSuccess={onSuccess} />
           <Link to="/login" variant="body2">
-            Already have an account?
+              Already have an account?
           </Link>
         </>
       )

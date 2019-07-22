@@ -28,14 +28,13 @@ const loginMutation = gql`
 const Login = ({ onLogin }) => (
   <Mutation mutation={loginMutation}>
     {
-      (login, { error }) => (
+      login => (
         <>
-          { error && <p>{error.message}</p> }
           <Form login={login} onLogin={onLogin} />
           <Grid container>
             <Grid item xs>
               <Link to="/" variant="body2">
-                Forgot password?
+                    Forgot password?
               </Link>
             </Grid>
             <Grid item>

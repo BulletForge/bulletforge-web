@@ -56,14 +56,14 @@ const Uploader = ({
     {
       (mutate) => {
         const getSignedUrl = async (file, callback) => {
+          onStart(file);
+
           const { response, error } = await getMutationResponse(file, mutate);
 
           if (error) {
-            onError(error);
+            onError(error.message);
             return;
           }
-
-          onStart();
 
           const { data: { createDirectUpload: { directUpload } } } = response;
           delete directUpload.headers['Content-Type'];
@@ -75,6 +75,7 @@ const Uploader = ({
           getSignedUrl,
           autoUpload,
           uploadRequestHeaders: {},
+          preprocess: (file, next) => { next(file); },
         };
 
         return (
@@ -106,8 +107,8 @@ Uploader.propTypes = {
 Uploader.defaultProps = {
   accept: 'image/*',
   autoUpload: true,
-  onStart: () => {
-    console.log('Upload Started.');
+  onStart: (file) => {
+    console.log(`Upload Started: ${file.name}`);
   },
   onError: (error) => {
     console.log(`Upload Error: ${error}`);

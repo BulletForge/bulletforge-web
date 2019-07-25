@@ -1,6 +1,8 @@
 import { gql } from 'apollo-boost';
 import { propType } from 'graphql-anywhere';
 
+import { userNodeFragment } from './user';
+
 export const projectNodeFragment = gql`
   fragment ProjectNode on Project {
     id
@@ -9,12 +11,11 @@ export const projectNodeFragment = gql`
     createdAt
     downloads
     permalink
-    imageUrl
     user {
-      login
-      permalink
+      ...UserNode
     }
   }
+  ${userNodeFragment}
 `;
 
 export const projectPropType = propType(projectNodeFragment);

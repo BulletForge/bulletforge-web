@@ -1,24 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
-import { gql } from 'apollo-boost';
 import _ from 'lodash';
 import { setAccessToken, clearAccessToken } from 'utils/accessToken';
-import context from './context';
 
-const query = gql`
-  query Me {
-    me {
-      id
-      login
-      email
-      admin
-    }
-  }
-`;
+import context from './context';
+import { meQuery } from './data';
 
 const Provider = ({ children }) => (
-  <Query query={query}>
+  <Query query={meQuery}>
     {
       ({
         loading, error, data, refetch,

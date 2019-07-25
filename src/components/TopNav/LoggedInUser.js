@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import { Link } from 'react-router-dom';
 
-import { userPropType } from 'components/CurrentUser';
+import { userPropType } from 'utils/graphql';
 
 const useStyles = makeStyles(theme => ({
   accountIcon: {

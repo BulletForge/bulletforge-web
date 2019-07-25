@@ -1,12 +1,27 @@
 import React from 'react';
+import { gql } from 'apollo-boost';
 import { Query } from 'react-apollo';
 import _ from 'lodash';
 
+import { projectNodeFragment } from 'utils/graphql';
+
 import ProjectList from './List';
-import { projectsQuery } from './data';
+
+const query = gql`
+  query Projects {
+    projects(first:10) {
+      edges {
+        node {
+          ...ProjectNode
+        }
+      }
+    }
+  }
+  ${projectNodeFragment}
+`;
 
 export default () => (
-  <Query query={projectsQuery}>
+  <Query query={query}>
     {
       ({
         loading, error, data,

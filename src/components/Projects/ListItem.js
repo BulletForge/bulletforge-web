@@ -3,7 +3,7 @@ import ListItem from '@material-ui/core/ListItem';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { projectPropType } from './data';
+import { projectPropType } from 'utils/graphql';
 
 const useStyles = makeStyles(theme => ({
   root: {

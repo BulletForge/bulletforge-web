@@ -1,14 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { gql } from 'apollo-boost';
 import { Query } from 'react-apollo';
 import _ from 'lodash';
+
 import { setAccessToken, clearAccessToken } from 'utils/accessToken';
+import { userNodeFragment } from 'utils/graphql';
 
 import context from './context';
-import { meQuery } from './data';
+
+const query = gql`
+  query Me {
+    me {
+      ...UserNode
+    }
+  }
+  ${userNodeFragment}
+`;
 
 const Provider = ({ children }) => (
-  <Query query={meQuery}>
+  <Query query={query}>
     {
       ({
         loading, error, data, refetch,

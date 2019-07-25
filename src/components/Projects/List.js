@@ -1,10 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Container from '@material-ui/core/Container';
 import List from '@material-ui/core/List';
 
+import { projectPropType } from 'utils/graphql';
+
 import ProjectListItem from './ListItem';
-import { projectsPropType } from './data';
 
 const ProjectList = ({ projects }) => (
   <Container>
@@ -15,7 +17,7 @@ const ProjectList = ({ projects }) => (
 );
 
 ProjectList.propTypes = {
-  projects: projectsPropType.isRequired,
+  projects: PropTypes.arrayOf(projectPropType).isRequired,
 };
 
 export default ProjectList;

@@ -2,13 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import { useSnackbar } from 'notistack';
 import { Formik } from 'formik';
 import _ from 'lodash';
 
 import Link from 'components/Link';
+import showSnackbar from 'utils/snackbar';
 
 import Schema from './Schema';
 import Form from './Form';
@@ -35,23 +34,7 @@ const registerMutation = gql`
 `;
 
 const Register = ({ onSuccess }) => {
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const handleError = (message) => {
-    const action = key => (
-      <IconButton
-        key="close"
-        aria-label="Close"
-        color="inherit"
-        onClick={() => { closeSnackbar(key); }}
-      >
-        <CloseIcon />
-      </IconButton>
-    );
-    enqueueSnackbar(message, {
-      action,
-      variant: 'error',
-    });
-  };
+  const snackbarHook = useSnackbar();
 
   return (
     <Mutation mutation={registerMutation}>
@@ -72,7 +55,7 @@ const Register = ({ onSuccess }) => {
               try {
                 response = await register({ variables });
               } catch (error) {
-                handleError(error.message);
+                showSnackbar(snackbarHook, error.message, 'error');
                 return;
               } finally {
                 setSubmitting(false);

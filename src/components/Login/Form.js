@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSnackbar } from 'notistack';
 import { Formik, Field, Form } from 'formik';
 import { TextField, Checkbox } from 'formik-material-ui';
 import _ from 'lodash';
+
+import showSnackbar from 'utils/snackbar';
 
 import LoginSchema from './Schema';
 import ErrorMessages from './ErrorMessages';
@@ -29,24 +29,7 @@ const LoginForm = ({
   onLogin,
 }) => {
   const classes = useStyles();
-
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const handleError = (message) => {
-    const action = key => (
-      <IconButton
-        key="close"
-        aria-label="Close"
-        color="inherit"
-        onClick={() => { closeSnackbar(key); }}
-      >
-        <CloseIcon />
-      </IconButton>
-    );
-    enqueueSnackbar(message, {
-      action,
-      variant: 'error',
-    });
-  };
+  const snackbarHook = useSnackbar();
 
   return (
     <Formik
@@ -62,7 +45,7 @@ const LoginForm = ({
         try {
           response = await login({ variables });
         } catch (error) {
-          handleError(error.message);
+          showSnackbar(snackbarHook, error.message, 'error');
           return;
         } finally {
           setSubmitting(false);

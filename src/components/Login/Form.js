@@ -3,14 +3,9 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSnackbar } from 'notistack';
-import { Formik, Field, Form } from 'formik';
+import { Field, Form } from 'formik';
 import { TextField, Checkbox } from 'formik-material-ui';
-import _ from 'lodash';
 
-import showSnackbar from 'utils/snackbar';
-
-import LoginSchema from './Schema';
 import ErrorMessages from './ErrorMessages';
 
 
@@ -25,93 +20,58 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const LoginForm = ({
-  login,
-  onLogin,
+  errors,
+  isSubmitting,
 }) => {
   const classes = useStyles();
-  const snackbarHook = useSnackbar();
 
   return (
-    <Formik
-      initialValues={{
-        login: '',
-        password: '',
-        rememberMe: false,
-      }}
-      validationSchema={LoginSchema}
-      onSubmit={async (variables, { setSubmitting, setFieldError }) => {
-        let response;
-
-        try {
-          response = await login({ variables });
-        } catch (error) {
-          showSnackbar(snackbarHook, error.message, 'error');
-          return;
-        } finally {
-          setSubmitting(false);
-        }
-
-        const { data: { login: { token, errors } } } = response;
-
-        if (token) {
-          onLogin(token);
-        } else {
-          setFieldError('general', _.map(errors, 'message'));
-        }
-      }}
-    >
-      {({
-        isSubmitting,
-        errors,
-      }) => (
-        <Form className={classes.form} noValidate>
-          <ErrorMessages errors={errors.general} />
+    <Form className={classes.form} noValidate>
+      <ErrorMessages errors={errors.general} />
+      <Field
+        required
+        label="Username"
+        name="login"
+        autoComplete="login"
+        autoFocus
+        component={TextField}
+      />
+      <Field
+        required
+        label="Password"
+        name="password"
+        autoComplete="current-password"
+        type="password"
+        component={TextField}
+      />
+      <FormControlLabel
+        control={(
           <Field
-            required
-            label="Username"
-            name="login"
-            autoComplete="login"
-            autoFocus
-            component={TextField}
-          />
-          <Field
-            required
-            label="Password"
-            name="password"
-            autoComplete="current-password"
-            type="password"
-            component={TextField}
-          />
-          <FormControlLabel
-            control={(
-              <Field
-                name="rememberMe"
-                color="primary"
-                component={Checkbox}
-              />
-            )}
-            label="Remember me"
-          />
-
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
+            name="rememberMe"
             color="primary"
-            className={classes.submit}
-            disabled={isSubmitting}
-          >
-            Sign In
-          </Button>
-        </Form>
-      )}
-    </Formik>
+            component={Checkbox}
+          />
+        )}
+        label="Remember me"
+      />
+
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        color="primary"
+        className={classes.submit}
+        disabled={isSubmitting}
+      >
+        Sign In
+      </Button>
+    </Form>
   );
 };
 
 LoginForm.propTypes = {
-  login: PropTypes.func.isRequired,
-  onLogin: PropTypes.func.isRequired,
+  errors: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
+  isSubmitting: PropTypes.bool.isRequired,
 };
 
 export default LoginForm;

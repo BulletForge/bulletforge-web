@@ -6,7 +6,6 @@ import ArchiveUploader from './ArchiveUploader';
 import UploadStatus from './UploadStatus';
 
 const Archive = ({
-  onStart,
   onFinish,
   onError,
 }) => {
@@ -22,7 +21,6 @@ const Archive = ({
     });
     setShowUploader(false);
     setShowProgress(true);
-    onStart(file);
   };
   const handleProgress = (progress, status) => {
     setUpload({
@@ -69,16 +67,12 @@ const Archive = ({
 };
 
 Archive.propTypes = {
-  onStart: PropTypes.func,
   onFinish: PropTypes.func,
   onError: PropTypes.func,
 };
 
 /* eslint-disable no-console */
 Archive.defaultProps = {
-  onStart: () => {
-    console.log('Upload Started.');
-  },
   onFinish: ({ signedBlobId }) => {
     console.log(`Upload Finished. Signed blob id: ${signedBlobId}`);
   },

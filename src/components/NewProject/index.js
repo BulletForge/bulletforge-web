@@ -43,13 +43,6 @@ export default () => {
   const [uploading, setUploading] = useState(true);
   const snackbarHook = useSnackbar();
 
-  const handleUploadStart = (file) => {
-    console.log(`Upload Started. File: ${file.name}`);
-  };
-  const handleUploadError = (message) => {
-    showSnackbar(snackbarHook, message, 'error');
-  };
-
   return (
     <>
       <Mutation mutation={createProjectMutation}>
@@ -93,10 +86,14 @@ export default () => {
                     setFieldValue('signedBlobId', signedBlobId);
                     setUploading(false);
                   };
+
+                  const handleUploadError = (message) => {
+                    showSnackbar(snackbarHook, message, 'error');
+                  };
+
                   return (
                     <>
                       <Archive
-                        onStart={handleUploadStart}
                         onFinish={handleUploadFinish}
                         onError={handleUploadError}
                       />

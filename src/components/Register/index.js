@@ -39,49 +39,49 @@ const Register = ({ onSuccess }) => {
   return (
     <Mutation mutation={registerMutation}>
       {
-      register => (
-        <>
-          <Formik
-            initialValues={{
-              login: '',
-              email: '',
-              password: '',
-              passwordConfirmation: '',
-            }}
-            validationSchema={Schema}
-            onSubmit={async (variables, { setSubmitting, setFieldError }) => {
-              let response;
+        register => (
+          <>
+            <Formik
+              initialValues={{
+                login: '',
+                email: '',
+                password: '',
+                passwordConfirmation: '',
+              }}
+              validationSchema={Schema}
+              onSubmit={async (variables, { setSubmitting, setFieldError }) => {
+                let response;
 
-              try {
-                response = await register({ variables });
-              } catch (error) {
-                showSnackbar(snackbarHook, error.message, 'error');
-                return;
-              } finally {
-                setSubmitting(false);
-              }
+                try {
+                  response = await register({ variables });
+                } catch (error) {
+                  showSnackbar(snackbarHook, error.message, 'error');
+                  return;
+                } finally {
+                  setSubmitting(false);
+                }
 
-              const { data: { register: { errors } } } = response;
+                const { data: { register: { errors } } } = response;
 
-              if (_.isEmpty(errors)) {
-                onSuccess();
-              } else {
-                _.each(errors, ({ path, message }) => {
-                  setFieldError(path[1], message);
-                });
-              }
-            }}
-          >
-            {({ isSubmitting }) => (
-              <Form isSubmitting={isSubmitting} />
-            )}
-          </Formik>
-          <Link to="/login" variant="body2">
+                if (_.isEmpty(errors)) {
+                  onSuccess();
+                } else {
+                  _.each(errors, ({ path, message }) => {
+                    setFieldError(path[1], message);
+                  });
+                }
+              }}
+            >
+              {({ isSubmitting }) => (
+                <Form isSubmitting={isSubmitting} />
+              )}
+            </Formik>
+            <Link to="/login" variant="body2">
               Already have an account?
-          </Link>
-        </>
-      )
-    }
+            </Link>
+          </>
+        )
+      }
     </Mutation>
   );
 };

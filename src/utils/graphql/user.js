@@ -7,6 +7,7 @@ export const userNodeFragment = gql`
     login
     email
     admin
+    permalink
   }
 `;
 

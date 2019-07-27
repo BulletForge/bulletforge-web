@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { gql } from 'apollo-boost';
 import { Mutation } from 'react-apollo';
 import { useSnackbar } from 'notistack';
@@ -39,14 +40,13 @@ const createProjectMutation = gql`
   ${projectNodeFragment}
 `;
 
-export default () => {
+const NewProject = ({ onSuccess }) => {
   const [uploading, setUploading] = useState(true);
   const snackbarHook = useSnackbar();
 
   return (
-    <>
-      <Mutation mutation={createProjectMutation}>
-        {
+    <Mutation mutation={createProjectMutation}>
+      {
           createProject => (
             <Formik
               initialValues={{
@@ -69,10 +69,10 @@ export default () => {
                   setSubmitting(false);
                 }
 
-                const { data: { createProject: { errors } } } = response;
+                const { data: { createProject: { project, errors } } } = response;
 
                 if (_.isEmpty(errors)) {
-                  // onSuccess();
+                  onSuccess(project);
                 } else {
                   _.each(errors, ({ path, message }) => {
                     setFieldError(path[1], message);
@@ -105,7 +105,16 @@ export default () => {
             </Formik>
           )
         }
-      </Mutation>
-    </>
+    </Mutation>
   );
 };
+
+NewProject.propTypes = {
+  onSuccess: PropTypes.func,
+};
+
+NewProject.defaultProps = {
+  onSuccess: null,
+};
+
+export default NewProject;

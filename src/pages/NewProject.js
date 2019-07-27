@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactRouterPropTypes from 'react-router-prop-types';
 import NewProject from 'components/NewProject';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
@@ -14,16 +15,23 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const NewProjectPage = () => {
+const NewProjectPage = ({ history }) => {
   const classes = useStyles();
+  const handleSuccess = (project) => {
+    history.replace(`/${project.user.permalink}/${project.permalink}`);
+  };
 
   return (
     <Container component="main" className={classes.container}>
       <Paper className={classes.paper}>
-        <NewProject />
+        <NewProject onSuccess={handleSuccess} />
       </Paper>
     </Container>
   );
+};
+
+NewProjectPage.propTypes = {
+  history: ReactRouterPropTypes.history.isRequired,
 };
 
 export default NewProjectPage;

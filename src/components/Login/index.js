@@ -3,12 +3,11 @@ import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
-import { useSnackbar } from 'notistack';
 import { Formik } from 'formik';
 import _ from 'lodash';
 
 import Link from 'components/Link';
-import showSnackbar from 'utils/snackbar';
+import useSnackbar from 'utils/snackbar';
 
 import LoginSchema from './Schema';
 import Form from './Form';
@@ -32,7 +31,7 @@ const loginMutation = gql`
 `;
 
 const Login = ({ onLogin }) => {
-  const snackbarHook = useSnackbar();
+  const showSnackbar = useSnackbar();
 
   return (
     <Mutation mutation={loginMutation}>
@@ -52,7 +51,7 @@ const Login = ({ onLogin }) => {
                 try {
                   response = await login({ variables });
                 } catch (error) {
-                  showSnackbar(snackbarHook, error.message, 'error');
+                  showSnackbar(error.message, 'error');
                   return;
                 } finally {
                   setSubmitting(false);

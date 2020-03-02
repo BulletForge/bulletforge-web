@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { gql } from 'apollo-boost';
 import { Mutation } from 'react-apollo';
-import { useSnackbar } from 'notistack';
 import { Formik } from 'formik';
 import _ from 'lodash';
 
-import showSnackbar from 'utils/snackbar';
+import useSnackbar from 'utils/snackbar';
 import { projectNodeFragment } from 'utils/graphql';
 
 import Archive from './Archive';
@@ -42,7 +41,7 @@ const createProjectMutation = gql`
 
 const NewProject = ({ onSuccess }) => {
   const [uploading, setUploading] = useState(true);
-  const snackbarHook = useSnackbar();
+  const showSnackbar = useSnackbar();
 
   return (
     <Mutation mutation={createProjectMutation}>
@@ -63,7 +62,7 @@ const NewProject = ({ onSuccess }) => {
                 try {
                   response = await createProject({ variables });
                 } catch (error) {
-                  showSnackbar(snackbarHook, error.message, 'error');
+                  showSnackbar(error.message, 'error');
                   return;
                 } finally {
                   setSubmitting(false);
@@ -88,7 +87,7 @@ const NewProject = ({ onSuccess }) => {
                   };
 
                   const handleUploadError = (message) => {
-                    showSnackbar(snackbarHook, message, 'error');
+                    showSnackbar(message, 'error');
                   };
 
                   return (

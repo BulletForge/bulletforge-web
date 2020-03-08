@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { gql } from 'apollo-boost';
-import { Query } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
@@ -40,82 +40,75 @@ const NewProjectForm = ({
   isSubmitting,
   uploading,
 }) => {
+  const { data } = useQuery(projectEnumsQuery);
   const classes = useStyles();
 
+  const danmakufuVersions = _.get(data, 'danmakufuVersions.enumValues', []);
+  const categories = _.get(data, 'categories.enumValues', []);
+
   return (
-    <Query query={projectEnumsQuery}>
-      {
-        ({ data }) => {
-          const danmakufuVersions = _.get(data, 'danmakufuVersions.enumValues', []);
-          const categories = _.get(data, 'categories.enumValues', []);
+    <Form className={classes.form}>
+      <Field
+        label="Title"
+        name="title"
+        component={TextField}
+        required
+      />
 
-          return (
-            <Form className={classes.form}>
-              <Field
-                label="Title"
-                name="title"
-                component={TextField}
-                required
-              />
+      <Field
+        label="Description"
+        name="description"
+        multiline
+        component={TextField}
+      />
 
-              <Field
-                label="Description"
-                name="description"
-                multiline
-                component={TextField}
-              />
-
-              <Field
-                label="Category"
-                select
-                name="category"
-                component={TextField}
-              >
-                {
-                  _.map(categories, version => (
-                    <MenuItem key={version.name} value={version.name}>
-                      {version.description}
-                    </MenuItem>
-                  ))
-                }
-              </Field>
-
-              <Field
-                label="Danmakufu Version"
-                select
-                name="danmakufuVersion"
-                component={TextField}
-              >
-                {
-                  _.map(danmakufuVersions, version => (
-                    <MenuItem key={version.name} value={version.name}>
-                      {version.description}
-                    </MenuItem>
-                  ))
-                }
-              </Field>
-
-              <Field
-                label="signedBlobId"
-                name="signedBlobId"
-                type="hidden"
-              />
-
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={isSubmitting || uploading}
-                type="submit"
-                className={classes.submit}
-                fullWidth
-              >
-                Create
-              </Button>
-            </Form>
-          );
+      <Field
+        label="Category"
+        select
+        name="category"
+        component={TextField}
+      >
+        {
+          _.map(categories, version => (
+            <MenuItem key={version.name} value={version.name}>
+              {version.description}
+            </MenuItem>
+          ))
         }
-      }
-    </Query>
+      </Field>
+
+      <Field
+        label="Danmakufu Version"
+        select
+        name="danmakufuVersion"
+        component={TextField}
+      >
+        {
+          _.map(danmakufuVersions, version => (
+            <MenuItem key={version.name} value={version.name}>
+              {version.description}
+            </MenuItem>
+          ))
+        }
+      </Field>
+
+      <Field
+        label="signedBlobId"
+        name="signedBlobId"
+        type="hidden"
+      />
+
+      <Button
+        variant="contained"
+        color="primary"
+        disabled={isSubmitting || uploading}
+        type="submit"
+        className={classes.submit}
+        fullWidth
+      >
+        Create
+      </Button>
+    </Form>
   );
 };
 

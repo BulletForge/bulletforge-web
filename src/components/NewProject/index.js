@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { gql } from 'apollo-boost';
-import { Mutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { Formik } from 'formik';
 import _ from 'lodash';
 
@@ -42,69 +42,64 @@ const createProjectMutation = gql`
 const NewProject = ({ onSuccess }) => {
   const [uploading, setUploading] = useState(true);
   const showSnackbar = useSnackbar();
+  const [createProject] = useMutation(createProjectMutation);
 
   return (
-    <Mutation mutation={createProjectMutation}>
-      {
-          createProject => (
-            <Formik
-              initialValues={{
-                title: '',
-                description: '',
-                category: 'SINGLE',
-                danmakufuVersion: 'V_PH3',
-                signedBlobId: '',
-              }}
-              validationSchema={Schema}
-              onSubmit={async (variables, { setSubmitting, setFieldError }) => {
-                let response;
+    <Formik
+      initialValues={{
+        title: '',
+        description: '',
+        category: 'SINGLE',
+        danmakufuVersion: 'V_PH3',
+        signedBlobId: '',
+      }}
+      validationSchema={Schema}
+      onSubmit={async (variables, { setSubmitting, setFieldError }) => {
+        let response;
 
-                try {
-                  response = await createProject({ variables });
-                } catch (error) {
-                  showSnackbar(error.message, 'error');
-                  return;
-                } finally {
-                  setSubmitting(false);
-                }
-
-                const { data: { createProject: { project, errors } } } = response;
-
-                if (_.isEmpty(errors)) {
-                  onSuccess(project);
-                } else {
-                  _.each(errors, ({ path, message }) => {
-                    setFieldError(path[1], message);
-                  });
-                }
-              }}
-            >
-              {
-                ({ isSubmitting, setFieldValue }) => {
-                  const handleUploadFinish = ({ signedBlobId }) => {
-                    setFieldValue('signedBlobId', signedBlobId);
-                    setUploading(false);
-                  };
-
-                  const handleUploadError = (message) => {
-                    showSnackbar(message, 'error');
-                  };
-
-                  return (
-                    <>
-                      <Archive
-                        onFinish={handleUploadFinish}
-                        onError={handleUploadError}
-                      />
-                      <Form isSubmitting={isSubmitting} uploading={uploading} />
-                    </>
-                  );
-                }
-              }
-            </Formik>
-          )
+        try {
+          response = await createProject({ variables });
+        } catch (error) {
+          showSnackbar(error.message, 'error');
+          return;
+        } finally {
+          setSubmitting(false);
         }
-    </Mutation>
+
+        const { data: { createProject: { project, errors } } } = response;
+
+        if (_.isEmpty(errors)) {
+          onSuccess(project);
+        } else {
+          _.each(errors, ({ path, message }) => {
+            setFieldError(path[1], message);
+          });
+        }
+      }}
+    >
+      {
+        ({ isSubmitting, setFieldValue }) => {
+          const handleUploadFinish = ({ signedBlobId }) => {
+            setFieldValue('signedBlobId', signedBlobId);
+            setUploading(false);
+          };
+
+          const handleUploadError = (message) => {
+            showSnackbar(message, 'error');
+          };
+
+          return (
+            <>
+              <Archive
+                onFinish={handleUploadFinish}
+                onError={handleUploadError}
+              />
+              <Form isSubmitting={isSubmitting} uploading={uploading} />
+            </>
+          );
+        }
+      }
+    </Formik>
   );
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DropzoneS3Uploader from 'react-dropzone-s3-uploader';
-import { Mutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import extractMetadata from './metadata';
 
@@ -51,54 +51,50 @@ const Uploader = ({
   onError,
   children,
   ...props
-}) => (
-  <Mutation mutation={mutation}>
-    {
-      (mutate) => {
-        const getSignedUrl = async (file, callback) => {
-          onStart(file);
+}) => {
+  const [mutate] = useMutation(mutation);
 
-          const { response, error: mutationError } = await getMutationResponse(file, mutate);
+  const getSignedUrl = async (file, callback) => {
+    onStart(file);
 
-          if (mutationError) {
-            onError(mutationError.message);
-            return;
-          }
+    const { response, error: mutationError } = await getMutationResponse(file, mutate);
 
-          const { data: { createDirectUpload: { directUpload, errors: userErrors } } } = response;
-
-          if (userErrors[0]) {
-            onError(userErrors[0].message);
-            return;
-          }
-
-          delete directUpload.headers['Content-Type'];
-          callback(directUpload);
-        };
-
-        const uploadOptions = {
-          getSignedUrl,
-          autoUpload,
-          uploadRequestHeaders: {},
-          preprocess: (file, next) => { next(file); },
-        };
-
-        return (
-          <DropzoneS3Uploader
-            upload={uploadOptions}
-            s3Url="https://s3.amazonaws.com/bulletforge_development"
-            passChildrenProps={false}
-            onError={onError}
-            accept={accept}
-            {...props}
-          >
-            {children}
-          </DropzoneS3Uploader>
-        );
-      }
+    if (mutationError) {
+      onError(mutationError.message);
+      return;
     }
-  </Mutation>
-);
+
+    const { data: { createDirectUpload: { directUpload, errors: userErrors } } } = response;
+
+    if (userErrors[0]) {
+      onError(userErrors[0].message);
+      return;
+    }
+
+    delete directUpload.headers['Content-Type'];
+    callback(directUpload);
+  };
+
+  const uploadOptions = {
+    getSignedUrl,
+    autoUpload,
+    uploadRequestHeaders: {},
+    preprocess: (file, next) => { next(file); },
+  };
+
+  return (
+    <DropzoneS3Uploader
+      upload={uploadOptions}
+      s3Url="https://s3.amazonaws.com/bulletforge_development"
+      passChildrenProps={false}
+      onError={onError}
+      accept={accept}
+      {...props}
+    >
+      {children}
+    </DropzoneS3Uploader>
+  );
+};
 
 Uploader.propTypes = {
   accept: PropTypes.string,

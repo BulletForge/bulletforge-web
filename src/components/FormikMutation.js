@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Mutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { Formik } from 'formik';
 
 import useSnackbar from 'utils/snackbar';
@@ -12,33 +12,28 @@ const FormikMutation = ({
   ...formikProps
 }) => {
   const showSnackbar = useSnackbar();
+  const [mutate] = useMutation(mutation);
 
   return (
-    <Mutation mutation={mutation}>
-      {
-        mutate => (
-          <Formik
-            {...formikProps}
-            onSubmit={async (variables, actions) => {
-              if (onSubmit) { onSubmit(variables, actions); }
+    <Formik
+      {...formikProps}
+      onSubmit={async (variables, actions) => {
+        if (onSubmit) { onSubmit(variables, actions); }
 
-              let response;
+        let response;
 
-              try {
-                response = await mutate({ variables });
-              } catch (error) {
-                showSnackbar(error.message, 'error');
-                return;
-              } finally {
-                actions.setSubmitting(false);
-              }
+        try {
+          response = await mutate({ variables });
+        } catch (error) {
+          showSnackbar(error.message, 'error');
+          return;
+        } finally {
+          actions.setSubmitting(false);
+        }
 
-              if (onMutationSuccess) { onMutationSuccess(response, actions); }
-            }}
-          />
-        )
-      }
-    </Mutation>
+        if (onMutationSuccess) { onMutationSuccess(response, actions); }
+      }}
+    />
   );
 };
 

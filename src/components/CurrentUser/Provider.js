@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { gql } from 'apollo-boost';
-import { Query } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import _ from 'lodash';
 
 import { setAccessToken, clearAccessToken } from 'utils/accessToken';
@@ -18,41 +18,37 @@ const query = gql`
   ${userNodeFragment}
 `;
 
-const Provider = ({ children }) => (
-  <Query query={query}>
-    {
-      ({
-        loading, error, data, refetch,
-      }) => {
-        const user = _.get(data, 'me');
+const Provider = ({ children }) => {
+  const {
+    loading, error, data, refetch,
+  } = useQuery(query);
 
-        const logout = () => {
-          clearAccessToken();
-          refetch();
-        };
+  const user = _.get(data, 'me');
 
-        const login = (token) => {
-          setAccessToken(token);
-          refetch();
-        };
+  const logout = () => {
+    clearAccessToken();
+    refetch();
+  };
 
-        return (
-          <context.Provider
-            value={{
-              user,
-              loading,
-              error,
-              logout,
-              login,
-            }}
-          >
-            { children }
-          </context.Provider>
-        );
-      }
-    }
-  </Query>
-);
+  const login = (token) => {
+    setAccessToken(token);
+    refetch();
+  };
+
+  return (
+    <context.Provider
+      value={{
+        user,
+        loading,
+        error,
+        logout,
+        login,
+      }}
+    >
+      { children }
+    </context.Provider>
+  );
+};
 
 Provider.propTypes = {
   children: PropTypes.node.isRequired,

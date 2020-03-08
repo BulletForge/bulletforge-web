@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { gql } from 'apollo-boost';
-import { useMutation } from '@apollo/react-hooks';
-import { Formik } from 'formik';
 import _ from 'lodash';
 
+import FormikMutation from 'components/FormikMutation';
 import useSnackbar from 'utils/snackbar';
 import { projectNodeFragment } from 'utils/graphql';
 
@@ -42,30 +41,11 @@ const createProjectMutation = gql`
 const NewProject = ({ onSuccess }) => {
   const [uploading, setUploading] = useState(true);
   const showSnackbar = useSnackbar();
-  const [createProject] = useMutation(createProjectMutation);
 
   return (
-    <Formik
-      initialValues={{
-        title: '',
-        description: '',
-        category: 'SINGLE',
-        danmakufuVersion: 'V_PH3',
-        signedBlobId: '',
-      }}
-      validationSchema={Schema}
-      onSubmit={async (variables, { setSubmitting, setFieldError }) => {
-        let response;
-
-        try {
-          response = await createProject({ variables });
-        } catch (error) {
-          showSnackbar(error.message, 'error');
-          return;
-        } finally {
-          setSubmitting(false);
-        }
-
+    <FormikMutation
+      mutation={createProjectMutation}
+      onMutationSuccess={(response, { setFieldError }) => {
         const { data: { createProject: { project, errors } } } = response;
 
         if (_.isEmpty(errors)) {
@@ -76,6 +56,14 @@ const NewProject = ({ onSuccess }) => {
           });
         }
       }}
+      initialValues={{
+        title: '',
+        description: '',
+        category: 'SINGLE',
+        danmakufuVersion: 'V_PH3',
+        signedBlobId: '',
+      }}
+      validationSchema={Schema}
     >
       {
         ({ isSubmitting, setFieldValue }) => {
@@ -99,7 +87,7 @@ const NewProject = ({ onSuccess }) => {
           );
         }
       }
-    </Formik>
+    </FormikMutation>
   );
 };
 
